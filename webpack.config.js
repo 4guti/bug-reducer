@@ -1,7 +1,8 @@
 // https://nodejs.org/api/path.html
 const path = require('path');
 
-const HtmlWebpackPlugin = require('html-webpack-plugin'); // Import our plugin -> ADDED IN THIS STEP
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const paths = {
   DIST: path.resolve(__dirname, 'dist'),
@@ -20,6 +21,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(paths.SRC, 'index.html'),
     }),
+    new ExtractTextPlugin('style.bundle.css')
   ],
   module: {
     rules: [
@@ -30,6 +32,14 @@ module.exports = {
           'babel-loader',
         ],
       },
+      // Files will get handled by css loader and then passed to the extract text plugin
+      // which will write it to the file we defined above
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract({
+          use: 'css-loader',
+        }),
+      }
     ],
   },
   resolve: {
